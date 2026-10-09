@@ -134,6 +134,12 @@ thuộc cây kia, gửi lên là upsert đè. Trình duyệt canh luật này �
 `person-edit.js` (`taoHoacDungNguoi`/`dungNguoiCoSan`).
 Đo: `../kiem-thu/ban-thu-sql/do-b124a.mjs`.
 
+**Người ĐẦU TIÊN của cây rỗng** lấy từ cây khác (`69`, 09/10/2026): không bản
+ghi, không quan hệ — lần lưu chỉ mang `tree.root_person_id`, nên trước `69` máy
+chủ trả `ok` mà cây vẫn 0 người. `69` thêm một nhánh vào `v_keo_vao`: cây rỗng
+thì người đặt làm gốc là người kéo vào. Trình duyệt phải `napCay()` sau lần ấy —
+bản sao vừa lưu không có bản ghi của họ. Đo: `../kiem-thu/ban-thu-sql/do-nguoi-dau-tien.mjs`.
+
 ## Mã toàn cục — xin bằng `cap_ma()`
 
 Mã P/U/M duy nhất toàn phần mềm, không tiền tố cây (b121). Trình duyệt đếm số

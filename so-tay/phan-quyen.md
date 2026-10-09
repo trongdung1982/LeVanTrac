@@ -76,6 +76,8 @@ Dán lại file bên trái thì phải dán tiếp các file bên phải, đúng
 - ⚠ **`28`/`32`/`48` → `52`**: `52` VÁ TẠI CHỖ `tu_choi_thay_doi()` ·
   `luu_cay()` · `gop_hai_nguoi()` (thêm `contact`). Dán lại một trong ba mà
   quên `52` là ô Liên hệ thôi lưu / thôi trả lại / thôi gộp — im lặng.
+  ⚠ Rồi **`→ 69`**: `69` vá tại chỗ `luu_cay()` (người đầu tiên lấy từ cây
+  khác). Dán lại `32`/`52` mà quên `69` là lỗi ấy quay lại — im lặng.
 - ⚠ **`02` định nghĩa `doc_change_log` bản rộng** — dán lại `02` (vốn đã cấm
   sau `26`) là mở lại `change_log` cho người chỉ xem.
 - **Sau `26` KHÔNG dán lại `02`/`11`** — luật đọc trên bảng người của chúng hỏi

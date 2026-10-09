@@ -1,6 +1,6 @@
 # KẾ HOẠCH — nhánh Supabase
 
-*Cập nhật 03/10/2026 · DỰ ÁN ĐÃ ĐÓNG (bộ cài bàn giao xong, b171) · SQL đã dán hết tới `68` · không còn việc kế tiếp.*
+*Cập nhật 09/10/2026 · DỰ ÁN ĐÃ ĐÓNG (bộ cài bàn giao xong, b171) · SQL đã dán tới `68` · ⚠ **`69` CHƯA DÁN** (người đầu tiên lấy từ cây khác) · không còn việc kế tiếp.*
 
 ⚠ **Không còn trần cứng dòng/byte** (bỏ 27/09/2026, b131 — chủ dự án chỉ ra:
 trần buộc nén nội dung mỗi bước, làm phiên sau đọc thiếu chi tiết mà hiểu sai

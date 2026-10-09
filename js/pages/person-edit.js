@@ -6,7 +6,7 @@
 // Phụ thuộc: pages/form-nen.js (nền dùng chung), pages/form-{go-noi,xoa,anh}.js,
 //            pages/quan-tri/o-goi-y.js, state, domains/{person,union,validate},
 //            services/repo, utils/{graph,text,date}, config
-// Phiên bản: 1.55.0 · Cập nhật: 29/09/2026 23:00 — bỏ ô "Đời thứ mấy" (b160)
+// Phiên bản: 1.56.0 · Cập nhật: 09/10/2026 21:32 — người đầu tiên lấy từ cây khác
 // Sổ tay   : so-tay/form-nguoi.md (13 luật của form) · so-tay/luu-du-lieu.md ·
 //            so-tay/o-goi-y.md · so-tay/nguoi-xuyen-cay.md
 // ============================================================
@@ -39,7 +39,7 @@ import { createUnion, addChild, addPartner, reorderChildren, thuTuConTheoTuoi,
          updateUnion, updateChildRelation, getParentUnions, getPartnerUnions,
          getSpouses, getChildren, rankCua, timCapTrung } from '../domains/union.js';
 import { validateAll } from '../domains/validate.js';
-import { luuCay, suaDuoc, timNguoiMoiCay, docNguoiTheoMa,
+import { luuCay, napCay, suaDuoc, timNguoiMoiCay, docNguoiTheoMa,
          nopDeNghiQuanHe } from '../services/repo.js';
 import { ganGoiY, dongNguoiCayKhac } from './quan-tri/o-goi-y.js';
 import { buildIndex } from '../utils/graph.js';
@@ -2011,8 +2011,13 @@ async function handleAddDauTien() {
         // Chỉ nhận gốc khi chỗ ấy còn trống. Cây đáng lẽ rỗng, nhưng bản sao
         // dùng ở đây là cây LÚC LƯU chứ không phải cây lúc mở form — và ghi đè
         // gốc của một gia phả đã có người là việc hàm này không được phép làm.
+        // Gốc trỏ vào người KHÔNG có trong cây cũng tính là còn trống — dấu
+        // của lần kéo người hỏng trước `luoc-do/69`, để nó tự lành.
         if (!cay.tree || typeof cay.tree !== 'object') cay.tree = {};
-        if (!cay.tree.rootPersonId) cay.tree.rootPersonId = nguoiMoi.id;
+        const gocCu = cay.tree.rootPersonId;
+        if (!gocCu || !cay.persons.some((p) => p && p.id === gocCu)) {
+          cay.tree.rootPersonId = nguoiMoi.id;
+        }
       },
       {
         action: 'create',
@@ -2026,10 +2031,26 @@ async function handleAddDauTien() {
     ketQua = { ok: false, loi: e && e.message ? e.message : String(e) };
   }
 
+  // Người ĐÃ CÓ ở cây khác: bản sao vừa lưu không mang bản ghi của họ (cố ý,
+  // xem trên), nên chỉ mục không biết họ và `onDaLuu` đứng vào khoảng không.
+  // Nạp lại từ máy chủ — `69` đã đưa họ vào `tree_persons`.
+  if (ketQua && ketQua.ok && nguoiCoSanChon) {
+    try { await napCay(); } catch (e) {
+      ketQua = { ok: false, loi: 'Đã lưu, nhưng chưa đọc lại được gia phả. Tải lại trang.' };
+    }
+  }
+
   N.dangLuu = false;
   if (!N.lopPhu) return;   // người dùng đã đóng form trong lúc chờ máy chủ
 
   if (ketQua && ketQua.ok) {
+    if (nguoiCoSanChon && !(state.index && state.index.personById.has(nguoiMoi.id))) {
+      // Máy chủ chưa có `69`, hoặc không cho kéo người này vào: đừng đóng form
+      // như thể đã xong.
+      hienNhan('Máy chủ nhận lần lưu nhưng KHÔNG đưa ' + tenMoi + ' vào gia phả này. ' +
+               'Báo quản trị hệ thống: cần dán luoc-do/69.', true);
+      return;
+    }
     closePersonForm();
     if (N.xuLyNgoai.onDaLuu) N.xuLyNgoai.onDaLuu(nguoiMoi.id);
     return;
